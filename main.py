@@ -1,5 +1,4 @@
 import os
-import yaml
 import feedparser
 import sqlite3
 import argparse
@@ -9,6 +8,10 @@ import time
 from src.banner import banner
 from discord_webhook import DiscordWebhook, DiscordEmbed
 from colorama import init, Fore, Back, just_fix_windows_console
+from dotenv import load_dotenv  # Import dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Import the banners from src folder banner file
 banner()
@@ -22,10 +25,6 @@ parser.add_argument('-s', '--silent', action='store_true', help="this option is 
 parser.add_argument('-a', '--active', action='store_true', help="when the database is updated and you want to get notifications when anything happens")
 
 args = parser.parse_args()
-
-# Load configuration from YAML file
-with open('config.yml', 'r') as config_file:
-    config = yaml.safe_load(config_file)
 
 while True:
     # Connect to the SQLite database
@@ -80,8 +79,8 @@ while True:
         link = entry.link
         summary = entry.summary
 
-        # Retrieve Discord webhook URL from configuration
-        webhook_url = config['Discord']['Discord_Webhocks']
+        # Retrieve Discord webhook URL from environment variable
+        webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
 
         # Create a Discord webhook
         webhook = DiscordWebhook(url=webhook_url)
